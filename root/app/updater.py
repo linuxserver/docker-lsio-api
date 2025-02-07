@@ -51,13 +51,13 @@ def get_state():
 
 def update_images():
     with KeyValueStore(invalidate_hours=INVALIDATE_HOURS, readonly=False) as kv:
-        if 'images' in kv:
-            print(f'{datetime.datetime.now()} - skipped - already updated')
+        if "images" in kv:
+            print(f"{datetime.datetime.now()} - skipped - already updated")
             return
-        print(f'{datetime.datetime.now()} - updating images')
+        print(f"{datetime.datetime.now()} - updating images")
         current_state = get_state()
-        kv['images'] = json.dumps(current_state)
-        print(f'{datetime.datetime.now()} - updated images')
+        kv["images"] = json.dumps(current_state)
+        print(f"{datetime.datetime.now()} - updated images")
 
 class UpdateImages(threading.Thread):
     def run(self,*args,**kwargs):
@@ -65,6 +65,6 @@ class UpdateImages(threading.Thread):
             update_images()
             time.sleep(INVALIDATE_HOURS*60*60)
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     update_images_thread = UpdateImages()
     update_images_thread.start()
