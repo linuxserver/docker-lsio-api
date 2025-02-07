@@ -1,0 +1,26 @@
+---
+
+# jenkins variables
+project_name: docker-lsio-api
+external_type: os
+release_type: stable
+release_tag: latest
+ls_branch: main
+repo_vars:
+  - BUILD_VERSION_ARG = 'OS'
+  - LS_USER = 'linuxserver'
+  - LS_REPO = 'docker-lsio-api'
+  - CONTAINER_NAME = 'lsio-api'
+  - DOCKERHUB_IMAGE = 'linuxserver/lsio-api'
+  - DEV_DOCKERHUB_IMAGE = 'lsiodev/lsio-api'
+  - PR_DOCKERHUB_IMAGE = 'lspipepr/lsio-api'
+  - DIST_IMAGE = 'alpine'
+  - MULTIARCH='true'
+  - CI='false'
+  - CI_WEB='false'
+  - CI_PORT='5000'
+  - CI_SSL='false'
+  - CI_DELAY='30'
+  - CI_DOCKERENV=''
+  - CI_AUTH=''
+  - CI_WEBPATH=''
