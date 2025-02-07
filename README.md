@@ -31,6 +31,7 @@ docker run -d \
 -e PUID=1000 \
 -e PGID=1000 \
 -e TZ=Etc/UTC \
+-e CI=0 `#optional` \
 -e DB_FILE=/config/api.db `#optional` \
 -e INVALIDATE_HOURS=24 `#optional` \
 -e PAT=token `#optional` \

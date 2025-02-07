@@ -9,6 +9,7 @@ import threading
 import time
 import yaml
 
+CI = os.environ.get("CI", None)
 INVALIDATE_HOURS = int(os.environ.get("INVALIDATE_HOURS", "24"))
 PAT = os.environ.get("PAT", None)
 
@@ -51,7 +52,7 @@ def get_state():
 
 def update_images():
     with KeyValueStore(invalidate_hours=INVALIDATE_HOURS, readonly=False) as kv:
-        if "images" in kv:
+        if "images" in kv or CI == "1":
             print(f"{datetime.datetime.now()} - skipped - already updated")
             return
         print(f"{datetime.datetime.now()} - updating images")
