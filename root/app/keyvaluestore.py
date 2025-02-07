@@ -1,6 +1,7 @@
+import os
 import sqlite3
 
-DB_FILE = "/config/api.db"
+DB_FILE = os.environ.get("DB_FILE", "/config/api.db")
 
 
 class KeyValueStore(dict):
