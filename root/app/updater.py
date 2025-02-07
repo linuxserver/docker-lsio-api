@@ -1,6 +1,6 @@
+from github import Auth
 from github import Github
 from keyvaluestore import KeyValueStore
-from urllib.request import urlopen
 
 import datetime
 import json
@@ -10,20 +10,21 @@ import time
 import yaml
 
 INVALIDATE_HOURS = int(os.environ.get("INVALIDATE_HOURS", "24"))
+PAT = os.environ.get("PAT", None)
 
 
 def get_repos():
-    gh = Github()
+    auth = Auth.Token(PAT) if PAT else None
+    gh = Github(auth=auth)
     org = gh.get_organization("linuxserver")
     repos = org.get_repos()
-    return [repo.full_name for repo in repos if repo.full_name.startswith("linuxserver/docker-") 
+    return [repo for repo in repos if repo.full_name.startswith("linuxserver/docker-") 
             and not repo.full_name.startswith("linuxserver/docker-baseimage-") 
             and (repo.description is None or "DEPRECATED" not in repo.description)]
 
 def get_vars(repo, branch):
     try:
-        url = f"https://raw.githubusercontent.com/{repo}/{branch}/readme-vars.yml"
-        content = urlopen(url).read()
+        content = repo.get_contents("readme-vars.yml", ref=branch).decoded_content
         return yaml.load(content, Loader=yaml.CLoader)
     except:
         return None
@@ -31,15 +32,18 @@ def get_vars(repo, branch):
 def get_state():
     images = []
     repos = get_repos()
-    for repo in sorted(repos):
+    for repo in sorted(repos, key=lambda repo: repo.full_name):
         readme_vars = get_vars(repo, "master") or get_vars(repo, "main") or get_vars(repo, "develop") or get_vars(repo, "nightly")
         if not readme_vars or "'project_deprecation_status': True" in str(readme_vars):
             continue
+        categories = readme_vars.get("project_categories", "")
+        if "Internal" in categories:
+            continue
         version = "latest" if "development_versions_items" not in readme_vars else readme_vars["development_versions_items"][0]["tag"]
         images.append({
-                    "name": repo.replace("linuxserver/docker-", ""),
+                    "name": repo.full_name.replace("linuxserver/docker-", ""),
                     "version": version,
-                    "category": readme_vars.get("project_categories", ""),
+                    "category": categories,
                     "stable": version == "latest",
                     "deprecated": False
                 })

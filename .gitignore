@@ -1,5 +1,6 @@
 .jenkins-external
 venv*
+.venv*
 __pycache__
 .vscode
 /output
@@ -18,3 +19,4 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+api.db

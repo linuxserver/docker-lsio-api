@@ -31,6 +31,8 @@ docker run -d \
 -e PUID=1000 \
 -e PGID=1000 \
 -e TZ=Etc/UTC \
+-e INVALIDATE_HOURS=24 `#optional` \
+-e PAT=token `#optional` \
 -p 5000:5000 \
 -v /path/to/lsio-api/config:/config \
 --restart unless-stopped \
