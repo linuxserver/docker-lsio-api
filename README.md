@@ -27,7 +27,7 @@ The container can be run locally:
 
 ```
 docker run -d \
---name=tautulli \
+--name=lsioapi \
 -e PUID=1000 \
 -e PGID=1000 \
 -e TZ=Etc/UTC \
