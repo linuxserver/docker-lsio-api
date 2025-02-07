@@ -1,4 +1,4 @@
-FROM ghcr.io/linuxserver/baseimage-alpine:edge AS buildstage
+FROM ghcr.io/linuxserver/baseimage-alpine:edge
 
 ARG BUILD_DATE
 ARG VERSION
@@ -16,6 +16,8 @@ RUN \
   pip install -U --no-cache-dir \
     pip && \
   pip install -U --no-cache-dir -r /tmp/requirements.txt && \
+  printf "Linuxserver.io version: ${VERSION}\nBuild-date: ${BUILD_DATE}" > /build_version && \
+  echo "**** cleanup ****" && \
   rm -rf \
     /tmp/* \
     $HOME/.cache
