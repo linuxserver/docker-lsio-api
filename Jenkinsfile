@@ -27,7 +27,7 @@ pipeline {
     DEV_DOCKERHUB_IMAGE = 'lsiodev/lsio-api'
     PR_DOCKERHUB_IMAGE = 'lspipepr/lsio-api'
     DIST_IMAGE = 'alpine'
-    MULTIARCH='true'
+    MULTIARCH='false'
     CI='true'
     CI_WEB='false'
     CI_PORT='8000'
