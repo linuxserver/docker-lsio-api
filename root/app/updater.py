@@ -112,7 +112,7 @@ def get_state():
 
 def update_images(schema_updated):
     with KeyValueStore(invalidate_hours=INVALIDATE_HOURS, readonly=False) as kv:
-        if ("images" in kv or CI == "1") and not schema_updated:
+        if ("images" in kv and not schema_updated) or CI == "1":
             print(f"{datetime.datetime.now()} - skipped - already updated")
             return
         print(f"{datetime.datetime.now()} - updating images")
