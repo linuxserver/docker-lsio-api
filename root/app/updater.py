@@ -1,9 +1,9 @@
 from github import Auth
 from github import Github
 from keyvaluestore import KeyValueStore
+from models import Image, Repository, ImagesData
 
 import datetime
-import json
 import os
 import threading
 import time
@@ -41,14 +41,14 @@ def get_state():
         if "Internal" in categories:
             continue
         version = "latest" if "development_versions_items" not in readme_vars else readme_vars["development_versions_items"][0]["tag"]
-        images.append({
-                    "name": repo.full_name.replace("linuxserver/docker-", ""),
-                    "version": version,
-                    "category": categories,
-                    "stable": version == "latest",
-                    "deprecated": False
-                })
-    return {"status": "OK", "data": {"repositories": {"linuxserver": images}}}
+        images.append(Image(
+                name=repo.full_name.replace("linuxserver/docker-", ""),
+                version=version,
+                category=categories,
+                stable=version == "latest",
+                deprecated=False
+            ))
+    return ImagesData(repositories=Repository(linuxserver=images)).model_dump_json()
 
 def update_images():
     with KeyValueStore(invalidate_hours=INVALIDATE_HOURS, readonly=False) as kv:
@@ -56,8 +56,7 @@ def update_images():
             print(f"{datetime.datetime.now()} - skipped - already updated")
             return
         print(f"{datetime.datetime.now()} - updating images")
-        current_state = get_state()
-        kv["images"] = json.dumps(current_state)
+        kv["images"] = get_state()
         print(f"{datetime.datetime.now()} - updated images")
 
 class UpdateImages(threading.Thread):

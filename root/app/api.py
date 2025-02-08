@@ -1,22 +1,17 @@
-from flask import Flask
-from flask import jsonify
+from fastapi import FastAPI
 from keyvaluestore import KeyValueStore
+from models import ImagesResponse, ImagesData
 
-api = Flask(__name__)
+api = FastAPI(docs_url="/")
 
+@api.get("/health", summary="Get the health status")
+async def health():
+    return "Success"
 
-@api.route("/health")
-def health():
-    return jsonify("Success")
-
-@api.route("/api/v1/images")
-def images():
+@api.get("/api/v1/images", response_model=ImagesResponse, summary="Get a list of images")
+async def images():
     with KeyValueStore() as kv:
-        return api.response_class(
-            response=kv["images"],
-            status=200,
-            mimetype="application/json"
-        )
+        return ImagesResponse(status="OK", data=ImagesData.model_validate_json(kv["images"]))
 
 if __name__ == "__main__":
     api.run()

@@ -1,5 +1,5 @@
 #!/usr/bin/with-contenv bash
 # shellcheck shell=bash
 
-exec s6-notifyoncheck -d -n 300 -w 1000 -c "nc -z localhost 5000" \
-    cd /app s6-setuidgid abc gunicorn api:api -b 0.0.0.0:5000 -w 4 --timeout 15 --log-level warning
+exec s6-notifyoncheck -d -n 300 -w 1000 -c "nc -z localhost 8000" \
+    cd /app s6-setuidgid abc fastapi run --workers 4 api.py

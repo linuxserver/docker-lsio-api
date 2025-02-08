@@ -35,7 +35,7 @@ docker run -d \
 -e DB_FILE=/config/api.db `#optional` \
 -e INVALIDATE_HOURS=24 `#optional` \
 -e PAT=token `#optional` \
--p 5000:5000 \
+-p 8000:8000 \
 -v /path/to/lsio-api/config:/config \
 --restart unless-stopped \
 lscr.io/linuxserver/lsio-api:latest
