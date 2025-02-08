@@ -11,6 +11,10 @@ class Architecture(BaseModel):
     arch: str
     tag: str
 
+class Changelog(BaseModel):
+    date: str
+    desc: str
+
 class Image(BaseModel):
     name: str
     github_url: str
@@ -18,6 +22,7 @@ class Image(BaseModel):
     description: str
     version: str
     version_timestamp: str
+    changelog: list[Changelog]
     category: str
     stable: bool
     deprecated: bool

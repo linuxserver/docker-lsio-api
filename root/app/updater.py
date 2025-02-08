@@ -1,7 +1,7 @@
 from github import Auth
 from github import Github
 from keyvaluestore import KeyValueStore
-from models import Architecture, Tag, Image, Repository, ImagesData, SCHEMA_VERSION
+from models import Architecture, Changelog, Tag, Image, Repository, ImagesData, SCHEMA_VERSION
 
 import datetime
 import json
@@ -56,6 +56,14 @@ def get_architectures(readme_vars):
         archs.append(Architecture(arch=item["arch"][8:-3], tag=item["tag"]))
     return archs
 
+def get_changelogs(readme_vars):
+    if "changelogs" not in readme_vars:
+        return [Changelog(date="01.01.50", desc="No changelog")]
+    changelogs = []
+    for item in readme_vars["changelogs"][0:3]:
+        changelogs.append(Changelog(date=item["date"][0:-1], desc=item["desc"]))
+    return changelogs
+
 def get_description(readme_vars):
     description = readme_vars.get("project_blurb", "No description")
     description = description.replace("\n", " ").strip(" \t\n\r")
@@ -83,6 +91,7 @@ def get_image(repo):
         description=get_description(readme_vars),
         version=version,
         version_timestamp=version_timestamp,
+        changelog=get_changelogs(readme_vars),
         category=categories,
         stable=stable,
         deprecated=deprecated,
