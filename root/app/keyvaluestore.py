@@ -21,7 +21,8 @@ class KeyValueStore(dict):
             self.conn.commit()
         self.conn.close()
     def __contains__(self, key):
-        return self.conn.execute(f"SELECT 1 FROM kv WHERE key = '{key}' AND updated_at >= DATETIME('now', '-{self.invalidate_hours} hours')").fetchone() is not None
+        where_clause = "" if self.invalidate_hours == 0 else f" AND updated_at >= DATETIME('now', '-{self.invalidate_hours} hours')"
+        return self.conn.execute(f"SELECT 1 FROM kv WHERE key = '{key}' {where_clause}").fetchone() is not None
     def __getitem__(self, key):
         item = self.conn.execute("SELECT value FROM kv WHERE key = ?", (key,)).fetchone()
         return item[0] if item else None

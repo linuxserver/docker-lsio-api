@@ -1,11 +1,11 @@
 from github import Auth
 from github import Github
 from keyvaluestore import KeyValueStore
-from models import Image, Repository, ImagesData
+from models import Architecture, Tag, Image, Repository, ImagesData, SCHEMA_VERSION
 
 import datetime
+import json
 import os
-import threading
 import time
 import yaml
 
@@ -19,8 +19,8 @@ def get_repos():
     gh = Github(auth=auth)
     org = gh.get_organization("linuxserver")
     repos = org.get_repos()
-    return [repo for repo in repos if repo.full_name.startswith("linuxserver/docker-") 
-            and not repo.full_name.startswith("linuxserver/docker-baseimage-") 
+    return [repo for repo in repos if repo.name.startswith("docker-") 
+            and not repo.name.startswith("docker-baseimage-") 
             and (repo.description is None or "DEPRECATED" not in repo.description)]
 
 def get_vars(repo, branch):
@@ -30,41 +30,98 @@ def get_vars(repo, branch):
     except:
         return None
 
+def get_version(repo):
+    for release in repo.get_releases():
+        if release.prerelease:
+            continue
+        return release.tag_name, str(release.published_at)
+    return "latest", str(repo.pushed_at)
+
+def get_tags(readme_vars):
+    if "development_versions_items" not in readme_vars:
+        return [Tag(tag="latest", desc="Stable releases")], True
+    tags = []
+    stable = False
+    for item in readme_vars["development_versions_items"]:
+        if item["tag"] == "latest":
+            stable = True
+        tags.append(Tag(tag=item["tag"], desc=item["desc"]))
+    return tags, stable
+
+def get_architectures(readme_vars):
+    if "available_architectures" not in readme_vars:
+        return [Architecture(arch="arch_x86_64", tag="amd64-latest")]
+    archs = []
+    for item in readme_vars["available_architectures"]:
+        archs.append(Architecture(arch=item["arch"][8:-3], tag=item["tag"]))
+    return archs
+
+def get_description(readme_vars):
+    description = readme_vars.get("project_blurb", "No description")
+    description = description.replace("\n", " ").strip(" \t\n\r")
+    if "project_name" in readme_vars:
+        description = description.replace("[{{ project_name|capitalize }}]", readme_vars["project_name"])
+        description = description.replace("[{{ project_name }}]", readme_vars["project_name"])
+    if "project_url" in readme_vars:
+        description = description.replace("({{ project_url }})", "")
+    return json.dumps(description).replace("\"", "")
+
+def get_image(repo):
+    readme_vars = get_vars(repo, "master") or get_vars(repo, "main") or get_vars(repo, "develop") or get_vars(repo, "nightly")
+    if not readme_vars:
+        return None
+    categories = readme_vars.get("project_categories", "")
+    if "Internal" in categories:
+        return None
+    tags, stable = get_tags(readme_vars)
+    deprecated = readme_vars.get("project_deprecation_status", False)
+    version, version_timestamp = get_version(repo)
+    return Image(
+        name=repo.name.replace("docker-", ""),
+        github_url=repo.html_url,
+        project_url=readme_vars.get("project_url", ""),
+        description=get_description(readme_vars),
+        version=version,
+        version_timestamp=version_timestamp,
+        category=categories,
+        stable=stable,
+        deprecated=deprecated,
+        stars=repo.stargazers_count,
+        tags=tags,
+        architectures=get_architectures(readme_vars)
+    )
+
 def get_state():
     images = []
     repos = get_repos()
-    for repo in sorted(repos, key=lambda repo: repo.full_name):
-        readme_vars = get_vars(repo, "master") or get_vars(repo, "main") or get_vars(repo, "develop") or get_vars(repo, "nightly")
-        if not readme_vars or "'project_deprecation_status': True" in str(readme_vars):
+    for repo in sorted(repos, key=lambda repo: repo.name):
+        image = get_image(repo)
+        if not image:
             continue
-        categories = readme_vars.get("project_categories", "")
-        if "Internal" in categories:
-            continue
-        version = "latest" if "development_versions_items" not in readme_vars else readme_vars["development_versions_items"][0]["tag"]
-        images.append(Image(
-                name=repo.full_name.replace("linuxserver/docker-", ""),
-                version=version,
-                category=categories,
-                stable=version == "latest",
-                deprecated=False
-            ))
+        images.append(image)
     return ImagesData(repositories=Repository(linuxserver=images)).model_dump_json()
 
-def update_images():
+def update_images(schema_updated):
     with KeyValueStore(invalidate_hours=INVALIDATE_HOURS, readonly=False) as kv:
-        if "images" in kv or CI == "1":
+        if ("images" in kv or CI == "1") and not schema_updated:
             print(f"{datetime.datetime.now()} - skipped - already updated")
             return
         print(f"{datetime.datetime.now()} - updating images")
         kv["images"] = get_state()
         print(f"{datetime.datetime.now()} - updated images")
 
-class UpdateImages(threading.Thread):
-    def run(self,*args,**kwargs):
-        while True:
-            update_images()
-            time.sleep(INVALIDATE_HOURS*60*60)
+def update_schema():
+    with KeyValueStore(invalidate_hours=0, readonly=False) as kv:
+        if "schema_version" in kv and kv["schema_version"] == SCHEMA_VERSION:
+            return False
+        kv["schema_version"] = SCHEMA_VERSION
+        return True
+
+def main():
+    while True:
+        schema_updated = update_schema()
+        update_images(schema_updated)
+        time.sleep(INVALIDATE_HOURS*60*60)
 
 if __name__ == "__main__":
-    update_images_thread = UpdateImages()
-    update_images_thread.start()
+    main()
