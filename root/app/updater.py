@@ -1,6 +1,6 @@
 import lsio_github as gh
 from keyvaluestore import KeyValueStore, set_db_schema
-from models import Architecture, Changelog, Tag, EnvVar, Volume, Port
+from models import Architecture, Changelog, Tag, EnvVar, Volume, Port, Config
 from models import Custom, SecurityOpt, Device, Cap, Hostname, MacAddress, Image
 from models import Repository, ImagesData, ImagesResponse, IMAGES_SCHEMA_VERSION
 
@@ -154,22 +154,8 @@ def get_image(repo):
     tags, stable = get_tags(readme_vars)
     deprecated = readme_vars.get("project_deprecation_status", None)
     version, version_timestamp = gh.get_last_stable_release(repo)
-    return Image(
-        name=repo.name.replace("docker-", ""),
-        github_url=repo.html_url,
-        stars=repo.stargazers_count,
-        project_url=readme_vars.get("project_url", None),
-        project_logo=readme_vars.get("project_logo", None),
+    config = Config(
         application_setup=f"{repo.html_url}?tab=readme-ov-file#application-setup",
-        description=get_description(readme_vars),
-        version=version,
-        version_timestamp=version_timestamp,
-        changelog=get_changelogs(readme_vars),
-        category=categories,
-        stable=stable,
-        deprecated=deprecated,
-        tags=tags,
-        architectures=get_architectures(readme_vars),
         readonly_supported=readme_vars.get("readonly_supported", None),
         nonroot_supported=readme_vars.get("nonroot_supported", None),
         privileged=readme_vars.get("privileged", None),
@@ -183,6 +169,23 @@ def get_image(repo):
         security_opt=get_security_opt(readme_vars),
         devices=get_devices(readme_vars),
         caps=get_caps(readme_vars),
+    )
+    return Image(
+        name=repo.name.replace("docker-", ""),
+        github_url=repo.html_url,
+        stars=repo.stargazers_count,
+        project_url=readme_vars.get("project_url", None),
+        project_logo=readme_vars.get("project_logo", None),
+        description=get_description(readme_vars),
+        version=version,
+        version_timestamp=version_timestamp,
+        category=categories,
+        stable=stable,
+        deprecated=deprecated,
+        tags=tags,
+        architectures=get_architectures(readme_vars),
+        changelog=get_changelogs(readme_vars),
+        config=config,
     )
 
 def update_images():

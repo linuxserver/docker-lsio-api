@@ -73,27 +73,14 @@ class MacAddress(BaseModel):
     desc: str
     optional: bool
 
-class Image(BaseModel):
-    name: str
-    github_url: str
-    project_url: str | None
-    project_logo: str | None
+class Config(BaseModel):
     application_setup: str
-    description: str
-    version: str
-    version_timestamp: str
-    category: str
-    stable: bool
-    deprecated: bool | None
-    stars: int
     readonly_supported: bool | None
     nonroot_supported: bool | None
     privileged: bool | None
     networking: str | None
     hostname: Hostname | None
     mac_address: MacAddress | None
-    tags: list[Tag]
-    architectures: list[Architecture]
     env_vars: list[EnvVar] | None
     volumes: list[Volume] | None
     ports: list[Port] | None
@@ -101,7 +88,23 @@ class Image(BaseModel):
     security_opt: list[SecurityOpt] | None
     devices: list[Device] | None
     caps: list[Cap] | None
+
+class Image(BaseModel):
+    name: str
+    github_url: str
+    project_url: str | None
+    project_logo: str | None
+    description: str
+    version: str
+    version_timestamp: str
+    category: str
+    stable: bool
+    deprecated: bool | None
+    stars: int
+    tags: list[Tag]
+    architectures: list[Architecture]
     changelog: list[Changelog] | None
+    config: Config
 
 class Repository(BaseModel):
     linuxserver: list[Image]
