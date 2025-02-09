@@ -142,6 +142,7 @@ def get_mac_address(readme_vars):
     return MacAddress(mac_address=hostname, desc=readme_vars.get("param_mac_address_desc", ""), optional=optional)
 
 def get_image(repo):
+    print(f"Processing {repo.name}")
     if not repo.name.startswith("docker-") or repo.name.startswith("docker-baseimage-"):
         return None
     readme_vars = gh.get_readme_vars(repo)

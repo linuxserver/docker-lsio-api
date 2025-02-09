@@ -42,7 +42,7 @@ class EnvVar(BaseModel):
 class Custom(BaseModel):
     name: str
     name_compose: str
-    value: str
+    value: str | list[str]
     desc: str
     optional: bool
 
