@@ -48,6 +48,8 @@ def get_description(readme_vars):
     return description
 
 def get_image(repo):
+    if not repo.name.startswith("docker-") or repo.name.startswith("docker-baseimage-"):
+        return None
     readme_vars = gh.get_readme_vars(repo)
     if not readme_vars:
         return None
@@ -82,7 +84,7 @@ def update_images():
         print(f"{datetime.datetime.now()} - updating images")
         images = []
         repos = gh.get_repos()
-        for repo in repos:
+        for repo in sorted(repos, key=lambda repo: repo.name):
             image = get_image(repo)
             if not image:
                 continue
@@ -94,7 +96,9 @@ def update_images():
 def main():
     set_db_schema()
     while True:
+        gh.print_rate_limit()
         update_images()
+        gh.print_rate_limit()
         time.sleep(INVALIDATE_HOURS*60*60)
 
 if __name__ == "__main__":

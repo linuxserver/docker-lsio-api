@@ -5,16 +5,12 @@ import os
 import yaml
 
 PAT = os.environ.get("PAT", None)
-
+GH_AUTH = Auth.Token(PAT) if PAT else None
+GH = Github(auth=GH_AUTH)
 
 def get_repos():
-    auth = Auth.Token(PAT) if PAT else None
-    gh = Github(auth=auth)
-    org = gh.get_organization("linuxserver")
-    repos = org.get_repos()
-    return [repo for repo in sorted(repos, key=lambda repo: repo.name) if repo.name.startswith("docker-") 
-            and not repo.name.startswith("docker-baseimage-") 
-            and (repo.description is None or "DEPRECATED" not in repo.description)]
+    org = GH.get_organization("linuxserver")
+    return org.get_repos()
 
 def get_file(repo, branch, path, is_yaml=False):
     try:
@@ -31,8 +27,11 @@ def get_last_stable_release(repo):
     return "latest", str(repo.pushed_at)
 
 def get_readme_vars(repo):
-    master = get_file(repo, "master", "readme-vars.yml", is_yaml=True)
-    main = get_file(repo, "master", "readme-vars.yml", is_yaml=True)
-    develop = get_file(repo, "master", "readme-vars.yml", is_yaml=True)
-    nightly = get_file(repo, "master", "readme-vars.yml", is_yaml=True)
-    return master or main or develop or nightly
+    return (
+        get_file(repo, "master", "readme-vars.yml", is_yaml=True) or
+        get_file(repo, "main", "readme-vars.yml", is_yaml=True) or
+        get_file(repo, "develop", "readme-vars.yml", is_yaml=True) or
+        get_file(repo, "nightly", "readme-vars.yml", is_yaml=True))
+
+def print_rate_limit():
+    print(f"Github ratelimit - {GH.get_rate_limit()}")
