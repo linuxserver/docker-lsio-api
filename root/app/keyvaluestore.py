@@ -2,7 +2,19 @@ import os
 import sqlite3
 
 DB_FILE = os.environ.get("DB_FILE", "/config/api.db")
+# Increment to drop tables and start over
+DB_SCHEMA_VERSION = 1
 
+
+def set_db_schema():
+    conn = sqlite3.connect(DB_FILE)
+    conn.execute("CREATE TABLE IF NOT EXISTS db_schema (key TEXT UNIQUE, version INTEGER DEFAULT 0)")
+    is_updated = conn.execute(f"SELECT 1 FROM db_schema WHERE version = {DB_SCHEMA_VERSION}").fetchone() is not None
+    if not is_updated:
+        conn.execute(f"DROP TABLE IF EXISTS kv")
+        conn.execute(f"REPLACE INTO db_schema (key, version) VALUES('schema_version', {DB_SCHEMA_VERSION})")
+        conn.commit()
+    conn.close()
 
 class KeyValueStore(dict):
     def __init__( self, invalidate_hours=24, readonly=True):
@@ -10,7 +22,7 @@ class KeyValueStore(dict):
         self.readonly = readonly
         if not readonly:
             self.conn = sqlite3.connect(DB_FILE)
-            self.conn.execute("CREATE TABLE IF NOT EXISTS kv (key TEXT UNIQUE, value TEXT, updated_at TEXT)")
+            self.conn.execute("CREATE TABLE IF NOT EXISTS kv (key TEXT UNIQUE, value TEXT, updated_at TEXT, schema_version INTEGER)")
             self.conn.commit()
             self.conn.close()
     def __enter__(self):
@@ -26,6 +38,12 @@ class KeyValueStore(dict):
     def __getitem__(self, key):
         item = self.conn.execute("SELECT value FROM kv WHERE key = ?", (key,)).fetchone()
         return item[0] if item else None
-    def __setitem__(self, key, value):
-        self.conn.execute("REPLACE INTO kv (key, value, updated_at) VALUES (?,?, CURRENT_TIMESTAMP)", (key, value))
+    def set_value(self, key, value, schema_version):
+        self.conn.execute("REPLACE INTO kv (key, value, updated_at, schema_version) VALUES (?, ?, CURRENT_TIMESTAMP, ?)", (key, value, schema_version))
         self.conn.commit()
+    def update_schema(self, key, schema_version):
+        is_updated = self.conn.execute(f"SELECT 1 FROM kv WHERE key = '{key}' AND schema_version = {schema_version}").fetchone() is not None
+        if not is_updated:
+            self.conn.execute(f"UPDATE kv SET schema_version = {schema_version} WHERE key = '{key}'")
+            self.conn.commit()
+        return is_updated

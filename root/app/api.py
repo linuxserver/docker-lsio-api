@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
 from keyvaluestore import KeyValueStore
-from models import ImagesResponse, ImagesData
+from models import ImagesResponse
+import json
 import traceback
 
 api = FastAPI(docs_url="/", title="LinuxServer API", redoc_url=None, version="1.0")
@@ -13,7 +15,8 @@ async def health():
 async def images():
     try:
         with KeyValueStore() as kv:
-            return ImagesResponse(status="OK", data=ImagesData.model_validate_json(kv["images"]))
+            content = json.loads(kv["images"])
+            return JSONResponse(content=content)
     except Exception:
         print(traceback.format_exc())
         raise HTTPException(status_code=404, detail="Not found")
