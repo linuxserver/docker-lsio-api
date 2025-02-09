@@ -99,7 +99,7 @@ class Image(BaseModel):
     version_timestamp: str
     category: str
     stable: bool
-    deprecated: bool | None
+    deprecated: bool
     stars: int
     tags: list[Tag]
     architectures: list[Architecture]

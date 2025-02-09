@@ -152,7 +152,7 @@ def get_image(repo):
     if "Internal" in categories:
         return None
     tags, stable = get_tags(readme_vars)
-    deprecated = readme_vars.get("project_deprecation_status", None)
+    deprecated = readme_vars.get("project_deprecation_status", False)
     version, version_timestamp = gh.get_last_stable_release(repo)
     config = Config(
         application_setup=f"{repo.html_url}?tab=readme-ov-file#application-setup",
