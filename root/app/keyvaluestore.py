@@ -38,6 +38,9 @@ class KeyValueStore(dict):
     def __getitem__(self, key):
         item = self.conn.execute("SELECT value FROM kv WHERE key = ?", (key,)).fetchone()
         return item[0] if item else None
+    def get_updated_at(self, key):
+        item = self.conn.execute("SELECT updated_at FROM kv WHERE key = ?", (key,)).fetchone()
+        return item[0] if item else None
     def set_value(self, key, value, schema_version):
         self.conn.execute("REPLACE INTO kv (key, value, updated_at, schema_version) VALUES (?, ?, CURRENT_TIMESTAMP, ?)", (key, value, schema_version))
         self.conn.commit()
