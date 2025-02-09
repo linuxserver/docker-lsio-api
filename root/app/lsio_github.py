@@ -27,8 +27,7 @@ def get_last_stable_release(repo):
     return "latest", str(repo.pushed_at)
 
 def get_readme_vars(repo):
-    return (
-        get_file(repo, "master", "readme-vars.yml", is_yaml=True) or
+    return (get_file(repo, "master", "readme-vars.yml", is_yaml=True) or
         get_file(repo, "main", "readme-vars.yml", is_yaml=True) or
         get_file(repo, "develop", "readme-vars.yml", is_yaml=True) or
         get_file(repo, "nightly", "readme-vars.yml", is_yaml=True))
