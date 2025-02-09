@@ -33,4 +33,5 @@ def get_readme_vars(repo):
         get_file(repo, "nightly", "readme-vars.yml", is_yaml=True))
 
 def print_rate_limit():
-    print(f"Github ratelimit - {GH.get_rate_limit()}")
+    ratelimit = GH.get_rate_limit().core
+    print(f"Github ratelimit - {ratelimit.remaining}/{ratelimit.limit} resets at {ratelimit.reset}")
