@@ -33,16 +33,13 @@ class KeyValueStore(dict):
             self.conn.commit()
         self.conn.close()
     def __contains__(self, key):
-        where_clause = "" if self.invalidate_hours == 0 else f" AND updated_at >= DATETIME('now', '-{self.invalidate_hours} hours')"
+        where_clause = "" if self.invalidate_hours == 0 else f" AND updated_at >= DATETIME('now', '-{self.invalidate_hours} hours', 'utc')"
         return self.conn.execute(f"SELECT 1 FROM kv WHERE key = '{key}' {where_clause}").fetchone() is not None
     def __getitem__(self, key):
         item = self.conn.execute("SELECT value FROM kv WHERE key = ?", (key,)).fetchone()
         return item[0] if item else None
-    def get_updated_at(self, key):
-        item = self.conn.execute("SELECT updated_at FROM kv WHERE key = ?", (key,)).fetchone()
-        return item[0] if item else None
     def set_value(self, key, value, schema_version):
-        self.conn.execute("REPLACE INTO kv (key, value, updated_at, schema_version) VALUES (?, ?, CURRENT_TIMESTAMP, ?)", (key, value, schema_version))
+        self.conn.execute("REPLACE INTO kv (key, value, updated_at, schema_version) VALUES (?, ?, DATETIME('now', 'utc'), ?)", (key, value, schema_version))
         self.conn.commit()
     def update_schema(self, key, schema_version):
         is_updated = self.conn.execute(f"SELECT 1 FROM kv WHERE key = '{key}' AND schema_version = {schema_version}").fetchone() is not None

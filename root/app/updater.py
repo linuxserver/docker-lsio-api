@@ -203,7 +203,8 @@ def update_images():
                 continue
             images.append(image)
         data = ImagesData(repositories=Repository(linuxserver=images))
-        response = ImagesResponse(status="OK", last_updated=kv.get_updated_at("images"), data=data)
+        last_updated = datetime.datetime.now(datetime.timezone.utc).isoformat(' ', 'seconds')
+        response = ImagesResponse(status="OK", last_updated=last_updated, data=data)
         new_state = response.model_dump_json(exclude_none=True)
         kv.set_value("images", new_state, IMAGES_SCHEMA_VERSION)
         print(f"{datetime.datetime.now()} - updated images")
