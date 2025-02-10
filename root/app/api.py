@@ -1,12 +1,20 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from keyvaluestore import KeyValueStore
 from models import ImagesResponse
 from pydantic import ValidationError
 import json
 import traceback
 
-api = FastAPI(docs_url="/", title="LinuxServer API", redoc_url=None, version="1.0")
+api = FastAPI(docs_url=None, redoc_url=None, version="1.0", title="LinuxServer API")
+api.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+@api.get("/", include_in_schema=False)
+async def swagger_ui_html():
+	return get_swagger_ui_html(openapi_url="/openapi.json", title="LinuxServer API", swagger_favicon_url="/static/logo.png")
 
 @api.get("/health", summary="Get the health status")
 async def health():
