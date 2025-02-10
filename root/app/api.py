@@ -6,9 +6,11 @@ from keyvaluestore import KeyValueStore
 from models import ImagesResponse
 from pydantic import ValidationError
 import json
+import os
 import traceback
 
-api = FastAPI(docs_url=None, redoc_url=None, version="1.0", title="LinuxServer API")
+URL = os.environ.get("URL", "http://localhost:8000")
+api = FastAPI(docs_url=None, redoc_url=None, version="1.0", title="LinuxServer API", servers=[{"url": URL}])
 api.mount("/static", StaticFiles(directory="static"), name="static")
 
 

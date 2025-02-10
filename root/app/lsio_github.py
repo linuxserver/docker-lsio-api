@@ -8,6 +8,7 @@ PAT = os.environ.get("PAT", None)
 GH_AUTH = Auth.Token(PAT) if PAT else None
 GH = Github(auth=GH_AUTH)
 
+
 def get_repos():
     org = GH.get_organization("linuxserver")
     return org.get_repos()
