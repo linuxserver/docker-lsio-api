@@ -74,26 +74,26 @@ class MacAddress(BaseModel):
     optional: bool
 
 class Config(BaseModel):
-    application_setup: str
-    readonly_supported: bool | None
-    nonroot_supported: bool | None
-    privileged: bool | None
-    networking: str | None
-    hostname: Hostname | None
-    mac_address: MacAddress | None
-    env_vars: list[EnvVar] | None
-    volumes: list[Volume] | None
-    ports: list[Port] | None
-    custom: list[Custom] | None
-    security_opt: list[SecurityOpt] | None
-    devices: list[Device] | None
-    caps: list[Cap] | None
+    application_setup: str | None = None
+    readonly_supported: bool | None = None
+    nonroot_supported: bool | None = None
+    privileged: bool | None = None
+    networking: str | None = None
+    hostname: Hostname | None = None
+    mac_address: MacAddress | None = None
+    env_vars: list[EnvVar] | None = None
+    volumes: list[Volume] | None = None
+    ports: list[Port] | None = None
+    custom: list[Custom] | None = None
+    security_opt: list[SecurityOpt] | None = None
+    devices: list[Device] | None = None
+    caps: list[Cap] | None = None
 
 class Image(BaseModel):
     name: str
     github_url: str
-    project_url: str | None
-    project_logo: str | None
+    project_url: str | None = None
+    project_logo: str | None = None
     description: str
     version: str
     version_timestamp: str
@@ -103,8 +103,8 @@ class Image(BaseModel):
     stars: int
     tags: list[Tag]
     architectures: list[Architecture]
-    changelog: list[Changelog] | None
-    config: Config
+    changelog: list[Changelog] | None = None
+    config: Config | None  = None
 
 class Repository(BaseModel):
     linuxserver: list[Image]
@@ -116,3 +116,11 @@ class ImagesResponse(BaseModel):
     status: str
     last_updated: str
     data: ImagesData
+
+    def exclude_config(self):
+        for image in self.data.repositories.linuxserver:
+            image.config = None
+
+    def exclude_deprecated(self):
+        images = self.data.repositories.linuxserver
+        self.data.repositories.linuxserver = list(filter(lambda image: not image.deprecated, images))

@@ -41,9 +41,5 @@ class KeyValueStore(dict):
     def set_value(self, key, value, schema_version):
         self.conn.execute("REPLACE INTO kv (key, value, updated_at, schema_version) VALUES (?, ?, DATETIME('now', 'utc'), ?)", (key, value, schema_version))
         self.conn.commit()
-    def update_schema(self, key, schema_version):
-        is_updated = self.conn.execute(f"SELECT 1 FROM kv WHERE key = '{key}' AND schema_version = {schema_version}").fetchone() is not None
-        if not is_updated:
-            self.conn.execute(f"UPDATE kv SET schema_version = {schema_version} WHERE key = '{key}'")
-            self.conn.commit()
-        return is_updated
+    def is_current_schema(self, key, schema_version):
+        return self.conn.execute(f"SELECT 1 FROM kv WHERE key = '{key}' AND schema_version = {schema_version}").fetchone() is not None

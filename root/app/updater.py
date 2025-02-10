@@ -154,8 +154,11 @@ def get_image(repo):
     tags, stable = get_tags(readme_vars)
     deprecated = readme_vars.get("project_deprecation_status", False)
     version, version_timestamp = gh.get_last_stable_release(repo)
+    application_setup = None
+    if readme_vars.get("app_setup_block_enabled", False):
+        application_setup = f"{repo.html_url}?tab=readme-ov-file#application-setup"
     config = Config(
-        application_setup=f"{repo.html_url}?tab=readme-ov-file#application-setup",
+        application_setup=application_setup,
         readonly_supported=readme_vars.get("readonly_supported", None),
         nonroot_supported=readme_vars.get("nonroot_supported", None),
         privileged=readme_vars.get("privileged", None),
@@ -190,8 +193,8 @@ def get_image(repo):
 
 def update_images():
     with KeyValueStore(invalidate_hours=INVALIDATE_HOURS, readonly=False) as kv:
-        is_updated = kv.update_schema("images", IMAGES_SCHEMA_VERSION)
-        if ("images" in kv and is_updated) or CI == "1":
+        is_current_schema = kv.is_current_schema("images", IMAGES_SCHEMA_VERSION)
+        if ("images" in kv and is_current_schema) or CI == "1":
             print(f"{datetime.datetime.now()} - skipped - already updated")
             return
         print(f"{datetime.datetime.now()} - updating images")
@@ -202,6 +205,7 @@ def update_images():
             if not image:
                 continue
             images.append(image)
+        
         data = ImagesData(repositories=Repository(linuxserver=images))
         last_updated = datetime.datetime.now(datetime.timezone.utc).isoformat(' ', 'seconds')
         response = ImagesResponse(status="OK", last_updated=last_updated, data=data)
