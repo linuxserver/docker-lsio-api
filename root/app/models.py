@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
-# Increment when updating schema
-IMAGES_SCHEMA_VERSION = 1
+# Increment when updating schema or forcing an update on start
+IMAGES_SCHEMA_VERSION = 2
 
 
 class Tag(BaseModel):
