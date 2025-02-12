@@ -25,10 +25,10 @@ def get_tags(readme_vars):
 
 def get_architectures(readme_vars):
     if "available_architectures" not in readme_vars:
-        return [Architecture(arch="arch_x86_64", tag="amd64-latest")]
+        return [Architecture(arch="x86_64", tag="amd64-latest")]
     archs = []
     for item in readme_vars["available_architectures"]:
-        archs.append(Architecture(arch=item["arch"][8:-3], tag=item["tag"]))
+        archs.append(Architecture(arch=item["arch"], tag=item["tag"]))
     return archs
 
 def get_changelogs(readme_vars):
@@ -42,11 +42,6 @@ def get_changelogs(readme_vars):
 def get_description(readme_vars):
     description = readme_vars.get("project_blurb", "No description")
     description = description.replace("\n", " ").strip(" \t\n\r")
-    if "project_name" in readme_vars:
-        description = description.replace("[{{ project_name|capitalize }}]", readme_vars["project_name"])
-        description = description.replace("[{{ project_name }}]", readme_vars["project_name"])
-    if "project_url" in readme_vars:
-        description = description.replace("({{ project_url }})", "")
     return description
 
 def get_env_vars(readme_vars):
@@ -130,7 +125,7 @@ def get_hostname(readme_vars):
     if not include_hostname:
         return None
     optional = include_hostname == "optional"
-    hostname = readme_vars.get("param_hostname", False).replace("{{ project_name }}", readme_vars["project_name"])
+    hostname = readme_vars.get("param_hostname", False)
     return Hostname(hostname=hostname, desc=readme_vars.get("param_hostname_desc", ""), optional=optional)
 
 def get_mac_address(readme_vars):
@@ -145,7 +140,8 @@ def get_image(repo):
     print(f"Processing {repo.name}")
     if not repo.name.startswith("docker-") or repo.name.startswith("docker-baseimage-"):
         return None
-    readme_vars = gh.get_readme_vars(repo)
+    project_name = repo.name.replace("docker-", "")
+    readme_vars = gh.get_readme_vars(repo, project_name)
     if not readme_vars:
         return None
     categories = readme_vars.get("project_categories", "")
@@ -174,7 +170,7 @@ def get_image(repo):
         caps=get_caps(readme_vars),
     )
     return Image(
-        name=repo.name.replace("docker-", ""),
+        name=project_name,
         github_url=repo.html_url,
         stars=repo.stargazers_count,
         project_url=readme_vars.get("project_url", None),
