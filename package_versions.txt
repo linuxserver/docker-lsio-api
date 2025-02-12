@@ -23,7 +23,7 @@ coreutils               9.6-r0            apk
 coreutils-env           9.6-r0            apk                      
 coreutils-fmt           9.6-r0            apk                      
 coreutils-sha512sum     9.6-r0            apk                      
-cryptography            44.0.0            python                   
+cryptography            44.0.1            python                   
 curl                    8.12.0-r0         apk                      
 deprecated              1.2.18            python                   
 dnspython               2.7.0             python                   
