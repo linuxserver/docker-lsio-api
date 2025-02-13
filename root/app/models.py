@@ -92,7 +92,7 @@ class Config(BaseModel):
 
 class Image(BaseModel):
     name: str
-    initial_date: str
+    initial_date: str | None = None
     github_url: str
     project_url: str | None = None
     project_logo: str | None = None
@@ -103,6 +103,7 @@ class Image(BaseModel):
     stable: bool
     deprecated: bool
     stars: int
+    monthly_pulls: int | None = None
     tags: list[Tag]
     architectures: list[Architecture]
     changelog: list[Changelog] | None = None

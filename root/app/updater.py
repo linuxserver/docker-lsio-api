@@ -6,10 +6,13 @@ from models import Repository, ImagesData, ImagesResponse, IMAGES_SCHEMA_VERSION
 
 import datetime
 import os
+import requests
 import time
+import traceback
 
 CI = os.environ.get("CI", None)
 INVALIDATE_HOURS = int(os.environ.get("INVALIDATE_HOURS", "24"))
+SCARF_TOKEN = os.environ.get("SCARF_TOKEN", None)
 
 
 def get_tags(readme_vars):
@@ -33,7 +36,7 @@ def get_architectures(readme_vars):
 
 def get_changelog(readme_vars):
     if "changelogs" not in readme_vars:
-        return None
+        return None, None
     changelog = []
     for item in readme_vars["changelogs"][0:3]:
         changelog.append(Changelog(date=item["date"][0:-1], desc=item["desc"]))
@@ -138,7 +141,23 @@ def get_mac_address(readme_vars):
     hostname = readme_vars.get("param_mac_address", False)
     return MacAddress(mac_address=hostname, desc=readme_vars.get("param_mac_address_desc", ""), optional=optional)
 
-def get_image(repo):
+def get_monthly_pulls():
+    pulls_map = {}
+    try:
+        response = requests.get("https://api.scarf.sh/v2/packages/linuxserver-ci/overview?per_page=1000", headers={"Authorization": f"Bearer {SCARF_TOKEN}"})
+        results = response.json()["results"]
+        for result in results:
+            name = result["package"]["name"].replace("linuxserver/", "")
+            if "total_installs" not in result:
+                continue
+            monthly_pulls = result["total_installs"]
+            pulls_map[name] = monthly_pulls
+    except Exception:
+        print(traceback.format_exc())
+        raise
+    return pulls_map
+
+def get_image(repo, pulls_map):
     print(f"Processing {repo.name}")
     if not repo.name.startswith("docker-") or repo.name.startswith("docker-baseimage-"):
         return None
@@ -176,7 +195,6 @@ def get_image(repo):
         name=project_name,
         initial_date=initial_date,
         github_url=repo.html_url,
-        stars=repo.stargazers_count,
         project_url=readme_vars.get("project_url", None),
         project_logo=readme_vars.get("project_logo", None),
         description=get_description(readme_vars),
@@ -185,6 +203,8 @@ def get_image(repo):
         category=categories,
         stable=stable,
         deprecated=deprecated,
+        stars=repo.stargazers_count,
+        monthly_pulls=pulls_map.get(project_name, None),
         tags=tags,
         architectures=get_architectures(readme_vars),
         changelog=changelog,
@@ -198,16 +218,17 @@ def update_images():
             print(f"{datetime.datetime.now()} - skipped - already updated")
             return
         print(f"{datetime.datetime.now()} - updating images")
+        pulls_map = get_monthly_pulls()
         images = []
         repos = gh.get_repos()
         for repo in sorted(repos, key=lambda repo: repo.name):
-            image = get_image(repo)
+            image = get_image(repo, pulls_map)
             if not image:
                 continue
             images.append(image)
         
         data = ImagesData(repositories=Repository(linuxserver=images))
-        last_updated = datetime.datetime.now(datetime.timezone.utc).isoformat(' ', 'seconds')
+        last_updated = datetime.datetime.now(datetime.timezone.utc).isoformat(" ", "seconds")
         response = ImagesResponse(status="OK", last_updated=last_updated, data=data)
         new_state = response.model_dump_json(exclude_none=True)
         kv.set_value("images", new_state, IMAGES_SCHEMA_VERSION)
