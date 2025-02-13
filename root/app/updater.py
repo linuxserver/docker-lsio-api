@@ -2,9 +2,10 @@ import lsio_github as gh
 from keyvaluestore import KeyValueStore, set_db_schema
 from models import Architecture, Changelog, Tag, EnvVar, Volume, Port, Config
 from models import Custom, SecurityOpt, Device, Cap, Hostname, MacAddress, Image
-from models import Repository, ImagesData, ImagesResponse, IMAGES_SCHEMA_VERSION
+from models import Repository, ImagesData, ImagesResponse, IMAGES_SCHEMA_VERSION, SCARF_SCHEMA_VERSION
 
 import datetime
+import json
 import os
 import requests
 import time
@@ -144,23 +145,7 @@ def get_mac_address(readme_vars):
     hostname = readme_vars.get("param_mac_address", False)
     return MacAddress(mac_address=hostname, desc=readme_vars.get("param_mac_address_desc", ""), optional=optional)
 
-def get_monthly_pulls():
-    pulls_map = {}
-    try:
-        response = requests.get("https://api.scarf.sh/v2/packages/linuxserver-ci/overview?per_page=1000", headers={"Authorization": f"Bearer {SCARF_TOKEN}"})
-        results = response.json()["results"]
-        for result in results:
-            name = result["package"]["name"].replace("linuxserver/", "")
-            if "total_installs" not in result:
-                continue
-            monthly_pulls = result["total_installs"]
-            pulls_map[name] = monthly_pulls
-    except Exception:
-        print(traceback.format_exc())
-        raise
-    return pulls_map
-
-def get_image(repo, pulls_map):
+def get_image(repo, scarf_data):
     print(f"Processing {repo.name}")
     if not repo.name.startswith("docker-") or repo.name.startswith("docker-baseimage-"):
         return None
@@ -207,7 +192,7 @@ def get_image(repo, pulls_map):
         stable=stable,
         deprecated=deprecated,
         stars=repo.stargazers_count,
-        monthly_pulls=pulls_map.get(project_name, None),
+        monthly_pulls=scarf_data.get(project_name, None),
         tags=tags,
         architectures=get_architectures(readme_vars),
         changelog=changelog,
@@ -218,14 +203,14 @@ def update_images():
     with KeyValueStore(invalidate_hours=INVALIDATE_HOURS, readonly=False) as kv:
         is_current_schema = kv.is_current_schema("images", IMAGES_SCHEMA_VERSION)
         if ("images" in kv and is_current_schema) or CI == "1":
-            print(f"{datetime.datetime.now()} - skipped - already updated")
+            print(f"{datetime.datetime.now()} - images skipped - already updated")
             return
         print(f"{datetime.datetime.now()} - updating images")
-        pulls_map = get_monthly_pulls()
         images = []
+        scarf_data = json.loads(kv["scarf"])
         repos = gh.get_repos()
         for repo in sorted(repos, key=lambda repo: repo.name):
-            image = get_image(repo, pulls_map)
+            image = get_image(repo, scarf_data)
             if not image:
                 continue
             images.append(image)
@@ -237,10 +222,41 @@ def update_images():
         kv.set_value("images", new_state, IMAGES_SCHEMA_VERSION)
         print(f"{datetime.datetime.now()} - updated images")
 
+def get_monthly_pulls():
+    pulls_map = {}
+    try:
+        response = requests.get("https://api.scarf.sh/v2/packages/linuxserver-ci/overview?per_page=1000", headers={"Authorization": f"Bearer {SCARF_TOKEN}"})
+        results = response.json()["results"]
+        for result in results:
+            name = result["package"]["name"].replace("linuxserver/", "")
+            if "total_installs" not in result:
+                continue
+            monthly_pulls = result["total_installs"]
+            pulls_map[name] = monthly_pulls
+    except Exception:
+        print(traceback.format_exc())
+    return pulls_map
+
+def update_scarf():
+    with KeyValueStore(invalidate_hours=INVALIDATE_HOURS, readonly=False) as kv:
+        is_current_schema = kv.is_current_schema("scarf", SCARF_SCHEMA_VERSION)
+        if ("scarf" in kv and is_current_schema) or CI == "1":
+            print(f"{datetime.datetime.now()} - scarf skipped - already updated")
+            return
+        print(f"{datetime.datetime.now()} - updating scarf")
+        pulls_map = get_monthly_pulls()
+        if not pulls_map:
+            return
+        new_state = json.dumps(pulls_map)
+        kv.set_value("scarf", new_state, SCARF_SCHEMA_VERSION)
+        print(f"{datetime.datetime.now()} - updated scarf")
+    
+
 def main():
     set_db_schema()
     while True:
         gh.print_rate_limit()
+        update_scarf()
         update_images()
         gh.print_rate_limit()
         time.sleep(INVALIDATE_HOURS*60*60)

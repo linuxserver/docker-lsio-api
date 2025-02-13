@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 # Increment when updating schema or forcing an update on start
 IMAGES_SCHEMA_VERSION = 3
+SCARF_SCHEMA_VERSION = 1
 
 
 class Tag(BaseModel):
