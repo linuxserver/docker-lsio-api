@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 # Increment when updating schema or forcing an update on start
-IMAGES_SCHEMA_VERSION = 2
+IMAGES_SCHEMA_VERSION = 3
 
 
 class Tag(BaseModel):
@@ -92,6 +92,7 @@ class Config(BaseModel):
 
 class Image(BaseModel):
     name: str
+    initial_date: str
     github_url: str
     project_url: str | None = None
     project_logo: str | None = None

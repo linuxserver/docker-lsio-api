@@ -31,13 +31,15 @@ def get_architectures(readme_vars):
         archs.append(Architecture(arch=item["arch"], tag=item["tag"]))
     return archs
 
-def get_changelogs(readme_vars):
+def get_changelog(readme_vars):
     if "changelogs" not in readme_vars:
         return None
-    changelogs = []
+    changelog = []
     for item in readme_vars["changelogs"][0:3]:
-        changelogs.append(Changelog(date=item["date"][0:-1], desc=item["desc"]))
-    return changelogs
+        changelog.append(Changelog(date=item["date"][0:-1], desc=item["desc"]))
+    first_changelog = readme_vars["changelogs"][-1]
+    initial_date = first_changelog["date"][0:-1]
+    return changelog, initial_date
 
 def get_description(readme_vars):
     description = readme_vars.get("project_blurb", "No description")
@@ -153,6 +155,7 @@ def get_image(repo):
     application_setup = None
     if readme_vars.get("app_setup_block_enabled", False):
         application_setup = f"{repo.html_url}?tab=readme-ov-file#application-setup"
+    changelog, initial_date = get_changelog(readme_vars)
     config = Config(
         application_setup=application_setup,
         readonly_supported=readme_vars.get("readonly_supported", None),
@@ -171,6 +174,7 @@ def get_image(repo):
     )
     return Image(
         name=project_name,
+        initial_date=initial_date,
         github_url=repo.html_url,
         stars=repo.stargazers_count,
         project_url=readme_vars.get("project_url", None),
@@ -183,7 +187,7 @@ def get_image(repo):
         deprecated=deprecated,
         tags=tags,
         architectures=get_architectures(readme_vars),
-        changelog=get_changelogs(readme_vars),
+        changelog=changelog,
         config=config,
     )
 
