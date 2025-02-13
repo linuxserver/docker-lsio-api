@@ -39,10 +39,13 @@ def get_changelog(readme_vars):
         return None, None
     changelog = []
     for item in readme_vars["changelogs"][0:3]:
-        changelog.append(Changelog(date=item["date"][0:-1], desc=item["desc"]))
+        date = item["date"][0:-1]
+        normalized_date = str(datetime.datetime.strptime(date, "%d.%m.%y").date())
+        changelog.append(Changelog(date=normalized_date, desc=item["desc"]))
     first_changelog = readme_vars["changelogs"][-1]
     initial_date = first_changelog["date"][0:-1]
-    return changelog, initial_date
+    normalized_initial_date = str(datetime.datetime.strptime(initial_date, "%d.%m.%y").date())
+    return changelog, normalized_initial_date
 
 def get_description(readme_vars):
     description = readme_vars.get("project_blurb", "No description")
