@@ -35,6 +35,7 @@ docker run -d \
 -e DB_FILE=/config/api.db `#optional` \
 -e INVALIDATE_HOURS=24 `#optional` \
 -e PAT=token `#optional` \
+-e SCARF_TOKEN=token `#optional` \
 -e URL=http://localhost:8000 `#optional` \
 -p 8000:8000 \
 -v /path/to/lsio-api/config:/config \
