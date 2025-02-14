@@ -18,9 +18,18 @@ api.mount("/static", StaticFiles(directory="static"), name="static")
 async def swagger_ui_html():
 	return get_swagger_ui_html(openapi_url="/openapi.json", title="LinuxServer API", swagger_favicon_url="/static/logo.png")
 
+async def get_status():
+    with KeyValueStore() as kv:
+        return kv["status"]
+
 @api.get("/health", summary="Get the health status")
 async def health():
-    return "Success"
+    try:
+        content = await get_status()
+        return JSONResponse(content=content)
+    except Exception:
+        print(traceback.format_exc())
+        raise HTTPException(status_code=404, detail="Not found")
 
 async def get_images():
     with KeyValueStore() as kv:

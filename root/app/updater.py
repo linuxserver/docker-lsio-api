@@ -2,14 +2,18 @@ import lsio_github as gh
 from keyvaluestore import KeyValueStore, set_db_schema
 from models import Architecture, Changelog, Tag, EnvVar, Volume, Port, Config
 from models import Custom, SecurityOpt, Device, Cap, Hostname, MacAddress, Image
-from models import Repository, ImagesData, ImagesResponse, IMAGES_SCHEMA_VERSION
+from models import Repository, ImagesData, ImagesResponse, IMAGES_SCHEMA_VERSION, SCARF_SCHEMA_VERSION
 
 import datetime
+import json
 import os
+import requests
 import time
+import traceback
 
 CI = os.environ.get("CI", None)
 INVALIDATE_HOURS = int(os.environ.get("INVALIDATE_HOURS", "24"))
+SCARF_TOKEN = os.environ.get("SCARF_TOKEN", None)
 
 
 def get_tags(readme_vars):
@@ -31,13 +35,18 @@ def get_architectures(readme_vars):
         archs.append(Architecture(arch=item["arch"], tag=item["tag"]))
     return archs
 
-def get_changelogs(readme_vars):
+def get_changelog(readme_vars):
     if "changelogs" not in readme_vars:
-        return None
-    changelogs = []
+        return None, None
+    changelog = []
     for item in readme_vars["changelogs"][0:3]:
-        changelogs.append(Changelog(date=item["date"][0:-1], desc=item["desc"]))
-    return changelogs
+        date = item["date"][0:-1]
+        normalized_date = str(datetime.datetime.strptime(date, "%d.%m.%y").date())
+        changelog.append(Changelog(date=normalized_date, desc=item["desc"]))
+    first_changelog = readme_vars["changelogs"][-1]
+    initial_date = first_changelog["date"][0:-1]
+    normalized_initial_date = str(datetime.datetime.strptime(initial_date, "%d.%m.%y").date())
+    return changelog, normalized_initial_date
 
 def get_description(readme_vars):
     description = readme_vars.get("project_blurb", "No description")
@@ -136,7 +145,7 @@ def get_mac_address(readme_vars):
     hostname = readme_vars.get("param_mac_address", False)
     return MacAddress(mac_address=hostname, desc=readme_vars.get("param_mac_address_desc", ""), optional=optional)
 
-def get_image(repo):
+def get_image(repo, scarf_data):
     print(f"Processing {repo.name}")
     if not repo.name.startswith("docker-") or repo.name.startswith("docker-baseimage-"):
         return None
@@ -153,6 +162,7 @@ def get_image(repo):
     application_setup = None
     if readme_vars.get("app_setup_block_enabled", False):
         application_setup = f"{repo.html_url}?tab=readme-ov-file#application-setup"
+    changelog, initial_date = get_changelog(readme_vars)
     config = Config(
         application_setup=application_setup,
         readonly_supported=readme_vars.get("readonly_supported", None),
@@ -171,8 +181,8 @@ def get_image(repo):
     )
     return Image(
         name=project_name,
+        initial_date=initial_date,
         github_url=repo.html_url,
-        stars=repo.stargazers_count,
         project_url=readme_vars.get("project_url", None),
         project_logo=readme_vars.get("project_logo", None),
         description=get_description(readme_vars),
@@ -181,9 +191,11 @@ def get_image(repo):
         category=categories,
         stable=stable,
         deprecated=deprecated,
+        stars=repo.stargazers_count,
+        monthly_pulls=scarf_data.get(project_name, None),
         tags=tags,
         architectures=get_architectures(readme_vars),
-        changelog=get_changelogs(readme_vars),
+        changelog=changelog,
         config=config,
     )
 
@@ -191,30 +203,70 @@ def update_images():
     with KeyValueStore(invalidate_hours=INVALIDATE_HOURS, readonly=False) as kv:
         is_current_schema = kv.is_current_schema("images", IMAGES_SCHEMA_VERSION)
         if ("images" in kv and is_current_schema) or CI == "1":
-            print(f"{datetime.datetime.now()} - skipped - already updated")
+            print(f"{datetime.datetime.now()} - images skipped - already updated")
             return
         print(f"{datetime.datetime.now()} - updating images")
         images = []
+        scarf_data = json.loads(kv["scarf"])
         repos = gh.get_repos()
         for repo in sorted(repos, key=lambda repo: repo.name):
-            image = get_image(repo)
+            image = get_image(repo, scarf_data)
             if not image:
                 continue
             images.append(image)
         
         data = ImagesData(repositories=Repository(linuxserver=images))
-        last_updated = datetime.datetime.now(datetime.timezone.utc).isoformat(' ', 'seconds')
+        last_updated = datetime.datetime.now(datetime.timezone.utc).isoformat(" ", "seconds")
         response = ImagesResponse(status="OK", last_updated=last_updated, data=data)
         new_state = response.model_dump_json(exclude_none=True)
         kv.set_value("images", new_state, IMAGES_SCHEMA_VERSION)
         print(f"{datetime.datetime.now()} - updated images")
 
+def get_monthly_pulls():
+    pulls_map = {}
+    response = requests.get("https://api.scarf.sh/v2/packages/linuxserver-ci/overview?per_page=1000", headers={"Authorization": f"Bearer {SCARF_TOKEN}"})
+    results = response.json()["results"]
+    for result in results:
+        name = result["package"]["name"].replace("linuxserver/", "")
+        if "total_installs" not in result:
+            continue
+        monthly_pulls = result["total_installs"]
+        pulls_map[name] = monthly_pulls
+    return pulls_map
+
+def update_scarf():
+    with KeyValueStore(invalidate_hours=INVALIDATE_HOURS, readonly=False) as kv:
+        is_current_schema = kv.is_current_schema("scarf", SCARF_SCHEMA_VERSION)
+        if ("scarf" in kv and is_current_schema) or CI == "1":
+            print(f"{datetime.datetime.now()} - scarf skipped - already updated")
+            return
+        print(f"{datetime.datetime.now()} - updating scarf")
+        pulls_map = get_monthly_pulls()
+        if not pulls_map:
+            return
+        new_state = json.dumps(pulls_map)
+        kv.set_value("scarf", new_state, SCARF_SCHEMA_VERSION)
+        print(f"{datetime.datetime.now()} - updated scarf")
+
+def update_status(status):
+    with KeyValueStore(invalidate_hours=0, readonly=False) as kv:
+        print(f"{datetime.datetime.now()} - updating status")
+        kv.set_value("status", status, 0)
+        print(f"{datetime.datetime.now()} - updated status")
+
 def main():
-    set_db_schema()
-    while True:
-        gh.print_rate_limit()
-        update_images()
-        gh.print_rate_limit()
+    try:
+        set_db_schema()
+        while True:
+            gh.print_rate_limit()
+            update_scarf()
+            update_images()
+            gh.print_rate_limit()
+            update_status("Success")
+            time.sleep(INVALIDATE_HOURS*60*60)
+    except:
+        print(traceback.format_exc())
+        update_status("Failed")
         time.sleep(INVALIDATE_HOURS*60*60)
 
 if __name__ == "__main__":
