@@ -224,17 +224,14 @@ def update_images():
 
 def get_monthly_pulls():
     pulls_map = {}
-    try:
-        response = requests.get("https://api.scarf.sh/v2/packages/linuxserver-ci/overview?per_page=1000", headers={"Authorization": f"Bearer {SCARF_TOKEN}"})
-        results = response.json()["results"]
-        for result in results:
-            name = result["package"]["name"].replace("linuxserver/", "")
-            if "total_installs" not in result:
-                continue
-            monthly_pulls = result["total_installs"]
-            pulls_map[name] = monthly_pulls
-    except Exception:
-        print(traceback.format_exc())
+    response = requests.get("https://api.scarf.sh/v2/packages/linuxserver-ci/overview?per_page=1000", headers={"Authorization": f"Bearer {SCARF_TOKEN}"})
+    results = response.json()["results"]
+    for result in results:
+        name = result["package"]["name"].replace("linuxserver/", "")
+        if "total_installs" not in result:
+            continue
+        monthly_pulls = result["total_installs"]
+        pulls_map[name] = monthly_pulls
     return pulls_map
 
 def update_scarf():
@@ -250,15 +247,26 @@ def update_scarf():
         new_state = json.dumps(pulls_map)
         kv.set_value("scarf", new_state, SCARF_SCHEMA_VERSION)
         print(f"{datetime.datetime.now()} - updated scarf")
-    
+
+def update_status(status):
+    with KeyValueStore(invalidate_hours=0, readonly=False) as kv:
+        print(f"{datetime.datetime.now()} - updating status")
+        kv.set_value("status", status, 0)
+        print(f"{datetime.datetime.now()} - updated status")
 
 def main():
-    set_db_schema()
-    while True:
-        gh.print_rate_limit()
-        update_scarf()
-        update_images()
-        gh.print_rate_limit()
+    try:
+        set_db_schema()
+        while True:
+            gh.print_rate_limit()
+            update_scarf()
+            update_images()
+            gh.print_rate_limit()
+            update_status("Success")
+            time.sleep(INVALIDATE_HOURS*60*60)
+    except:
+        print(traceback.format_exc())
+        update_status("Failed")
         time.sleep(INVALIDATE_HOURS*60*60)
 
 if __name__ == "__main__":
