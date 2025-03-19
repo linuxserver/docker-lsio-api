@@ -5,7 +5,7 @@ alpine-baselayout       3.6.8-r1          apk
 alpine-baselayout-data  3.6.8-r1          apk                      
 alpine-keys             2.5-r0            apk                      
 annotated-types         0.7.0             python                   
-anyio                   4.8.0             python                   
+anyio                   4.9.0             python                   
 apk-tools               2.14.9-r1         apk                      
 bash                    5.2.37-r0         apk                      
 brotli-libs             1.1.0-r2          apk                      
@@ -24,7 +24,7 @@ coreutils-env           9.6-r2            apk
 coreutils-fmt           9.6-r2            apk                      
 coreutils-sha512sum     9.6-r2            apk                      
 cryptography            44.0.2            python                   
-curl                    8.12.1-r0         apk                      
+curl                    8.12.1-r1         apk                      
 deprecated              1.2.18            python                   
 dnspython               2.7.0             python                   
 email-validator         2.2.0             python                   
@@ -44,8 +44,8 @@ libattr                 2.5.2-r2          apk
 libbsd                  0.12.2-r0         apk                      
 libbz2                  1.0.8-r6          apk                      
 libcrypto3              3.3.3-r0          apk                      
-libcurl                 8.12.1-r0         apk                      
-libexpat                2.6.4-r0          apk                      
+libcurl                 8.12.1-r1         apk                      
+libexpat                2.7.0-r0          apk                      
 libffi                  3.4.7-r0          apk                      
 libgcc                  14.2.0-r5         apk                      
 libidn2                 2.3.7-r0          apk                      
