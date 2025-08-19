@@ -26,7 +26,8 @@ async def get_status():
 async def health():
     try:
         content = await get_status()
-        return JSONResponse(content=content)
+        status_code = 200 if content == "Success" else 500
+        return JSONResponse(content=content, status_code=status_code)
     except Exception:
         print(traceback.format_exc())
         raise HTTPException(status_code=404, detail="Not found")
