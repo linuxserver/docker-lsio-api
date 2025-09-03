@@ -23,13 +23,13 @@ coreutils               9.7-r1                    apk
 coreutils-env           9.7-r1                    apk                      
 coreutils-fmt           9.7-r1                    apk                      
 coreutils-sha512sum     9.7-r1                    apk                      
-cryptography            45.0.6                    python                   
+cryptography            45.0.7                    python                   
 curl                    8.15.0-r1                 apk                      
 deprecated              1.2.18                    python                   
 dnspython               2.7.0                     python                   
 email-validator         2.3.0                     python                   
 fastapi                 0.115.8                   python                   
-fastapi-cli             0.0.8                     python                   
+fastapi-cli             0.0.10                    python                   
 fastapi-cloud-cli       0.1.5                     python                   
 findutils               4.10.0-r0                 apk                      
 gdbm                    1.26-r0                   apk                      
@@ -92,7 +92,7 @@ rich                    14.1.0                    python
 rich-toolkit            0.15.0                    python                   
 rignore                 0.6.4                     python                   
 scanelf                 1.3.8-r2                  apk                      
-sentry-sdk              2.35.1                    python                   
+sentry-sdk              2.35.2                    python                   
 shadow                  4.18.0-r0                 apk                      
 shellingham             1.5.4                     python                   
 skalibs-libs            2.14.4.0-r0               apk                      
@@ -100,7 +100,7 @@ sniffio                 1.3.1                     python
 sqlite-libs             3.50.4-r1                 apk                      
 ssl_client              1.37.0-r22                apk                      
 starlette               0.45.3                    python                   
-typer                   0.16.1                    python                   
+typer                   0.17.3                    python                   
 typing-extensions       4.15.0                    python                   
 typing-inspection       0.4.1                     python                   
 tzdata                  2025b-r0                  apk                      
