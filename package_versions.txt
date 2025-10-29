@@ -71,7 +71,7 @@ netcat-openbsd          1.229.1-r0        apk
 nghttp2-libs            1.67.1-r0         apk                      
 nghttp3                 1.11.0-r0         apk                      
 oniguruma               6.9.10-r0         apk                      
-pip                     25.2              python                   
+pip                     25.3              python                   
 procps-ng               4.0.4-r3          apk                      
 pyc                     3.12.12-r0        apk                      
 pycparser               2.23              python                   
@@ -81,7 +81,7 @@ pygithub                2.5.0             python
 pygments                2.19.2            python                   
 pyjwt                   2.10.1            python                   
 pynacl                  1.6.0             python                   
-python-dotenv           1.1.1             python                   
+python-dotenv           1.2.1             python                   
 python-multipart        0.0.20            python                   
 python3                 3.12.12-r0        apk                      
 python3-pyc             3.12.12-r0        apk                      
