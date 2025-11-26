@@ -224,14 +224,18 @@ def update_images():
 
 def get_monthly_pulls():
     pulls_map = {}
-    response = requests.get("https://api.scarf.sh/v2/packages/linuxserver-ci/overview?per_page=1000", headers={"Authorization": f"Bearer {SCARF_TOKEN}"})
-    results = response.json()["results"]
-    for result in results:
-        name = result["package"]["name"].replace("linuxserver/", "")
-        if "total_installs" not in result:
-            continue
-        monthly_pulls = result["total_installs"]
-        pulls_map[name] = monthly_pulls
+    try:
+        response = requests.get("https://api.scarf.sh/v2/packages/linuxserver-ci/overview?per_page=1000", headers={"Authorization": f"Bearer {SCARF_TOKEN}"})
+        results = response.json()["results"]
+        for result in results:
+            name = result["package"]["name"].replace("linuxserver/", "")
+            if "total_installs" not in result:
+                continue
+            monthly_pulls = result["total_installs"]
+            pulls_map[name] = monthly_pulls
+    except Exception as ex:
+        print(ex)
+        print(traceback.format_exc())
     return pulls_map
 
 def update_scarf():
@@ -264,7 +268,8 @@ def main():
             gh.print_rate_limit()
             update_status("Success")
             time.sleep(INVALIDATE_HOURS*60*60)
-    except:
+    except Exception as ex:
+        print(ex)
         print(traceback.format_exc())
         update_status("Failed")
         time.sleep(INVALIDATE_HOURS*60*60)
