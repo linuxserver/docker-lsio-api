@@ -76,7 +76,7 @@ pip                     25.3              python
 procps-ng               4.0.4-r3          apk                      
 pyc                     3.12.12-r0        apk                      
 pycparser               2.23              python                   
-pydantic                2.12.4            python                   
+pydantic                2.12.5            python                   
 pydantic-core           2.41.5            python                   
 pygithub                2.5.0             python                   
 pygments                2.19.2            python                   
