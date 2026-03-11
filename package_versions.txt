@@ -18,7 +18,7 @@ ca-certificates-bundle  20251003-r0       apk
 catatonit               0.2.1-r0          apk                      
 certifi                 2026.2.25         python                   
 cffi                    2.0.0             python                   
-charset-normalizer      3.4.4             python                   
+charset-normalizer      3.4.5             python                   
 click                   8.3.1             python                   
 coreutils               9.10-r1           apk                      
 coreutils-env           9.10-r1           apk                      
@@ -31,7 +31,7 @@ dnspython               2.8.0             python
 email-validator         2.3.0             python                   
 fastapi                 0.115.8           python                   
 fastapi-cli             0.0.24            python                   
-fastapi-cloud-cli       0.14.0            python                   
+fastapi-cloud-cli       0.14.1            python                   
 fastar                  0.8.0             python                   
 findutils               4.10.0-r0         apk                      
 gdbm                    1.26-r0           apk                      
@@ -56,7 +56,7 @@ libintl                 0.24.1-r1         apk
 libmd                   1.1.0-r0          apk                      
 libncursesw             6.6_p20251231-r0  apk                      
 libpanelw               6.6_p20251231-r0  apk                      
-libproc2                4.0.5-r0          apk                      
+libproc2                4.0.6-r0          apk                      
 libpsl                  0.21.5-r3         apk                      
 libssl3                 3.5.5-r0          apk                      
 libstdc++               15.2.0-r2         apk                      
@@ -74,7 +74,7 @@ nghttp2-libs            1.68.0-r0         apk
 nghttp3                 1.13.1-r0         apk                      
 oniguruma               6.9.10-r0         apk                      
 pip                     26.0.1            python                   
-procps-ng               4.0.5-r0          apk                      
+procps-ng               4.0.6-r0          apk                      
 pyc                     3.12.12-r0        apk                      
 pycparser               3.0               python                   
 pydantic                2.12.5            python                   
@@ -105,14 +105,14 @@ starlette               0.45.3            python
 typer                   0.24.1            python                   
 typing-extensions       4.15.0            python                   
 typing-inspection       0.4.2             python                   
-tzdata                  2025c-r0          apk                      
+tzdata                  2026a-r0          apk                      
 urllib3                 2.6.3             python                   
 utmps-libs              0.1.3.2-r1        apk                      
 uvicorn                 0.41.0            python                   
 uvloop                  0.22.1            python                   
 watchfiles              1.1.1             python                   
 websockets              16.0              python                   
-wrapt                   2.1.1             python                   
+wrapt                   2.1.2             python                   
 xz-libs                 5.8.2-r0          apk                      
-zlib                    1.3.1-r2          apk                      
+zlib                    1.3.2-r0          apk                      
 zstd-libs               1.5.7-r2          apk                      
