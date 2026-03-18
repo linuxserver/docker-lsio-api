@@ -18,20 +18,20 @@ ca-certificates-bundle  20251003-r0       apk
 catatonit               0.2.1-r0          apk                      
 certifi                 2026.2.25         python                   
 cffi                    2.0.0             python                   
-charset-normalizer      3.4.5             python                   
+charset-normalizer      3.4.6             python                   
 click                   8.3.1             python                   
 coreutils               9.10-r1           apk                      
 coreutils-env           9.10-r1           apk                      
 coreutils-fmt           9.10-r1           apk                      
 coreutils-sha512sum     9.10-r1           apk                      
 cryptography            46.0.5            python                   
-curl                    8.18.0-r0         apk                      
+curl                    8.19.0-r0         apk                      
 deprecated              1.3.1             python                   
 dnspython               2.8.0             python                   
 email-validator         2.3.0             python                   
 fastapi                 0.115.8           python                   
 fastapi-cli             0.0.24            python                   
-fastapi-cloud-cli       0.14.1            python                   
+fastapi-cloud-cli       0.15.0            python                   
 fastar                  0.8.0             python                   
 findutils               4.10.0-r0         apk                      
 gdbm                    1.26-r0           apk                      
@@ -47,7 +47,7 @@ libattr                 2.5.2-r2          apk
 libbsd                  0.12.2-r0         apk                      
 libbz2                  1.0.8-r6          apk                      
 libcrypto3              3.5.5-r0          apk                      
-libcurl                 8.18.0-r0         apk                      
+libcurl                 8.19.0-r0         apk                      
 libexpat                2.7.4-r0          apk                      
 libffi                  3.5.2-r0          apk                      
 libgcc                  15.2.0-r2         apk                      
@@ -71,7 +71,6 @@ musl-utils              1.2.5-r21         apk
 ncurses-terminfo-base   6.6_p20251231-r0  apk                      
 netcat-openbsd          1.234.1-r0        apk                      
 nghttp2-libs            1.68.0-r0         apk                      
-nghttp3                 1.13.1-r0         apk                      
 oniguruma               6.9.10-r0         apk                      
 pip                     26.0.1            python                   
 procps-ng               4.0.6-r0          apk                      
@@ -81,7 +80,7 @@ pydantic                2.12.5            python
 pydantic-core           2.41.5            python                   
 pygithub                2.5.0             python                   
 pygments                2.19.2            python                   
-pyjwt                   2.11.0            python                   
+pyjwt                   2.12.1            python                   
 pynacl                  1.6.2             python                   
 python-dotenv           1.2.2             python                   
 python-multipart        0.0.22            python                   
@@ -95,7 +94,7 @@ rich                    14.3.3            python
 rich-toolkit            0.19.7            python                   
 rignore                 0.7.6             python                   
 scanelf                 1.3.9-r0          apk                      
-sentry-sdk              2.54.0            python                   
+sentry-sdk              2.55.0            python                   
 shadow                  4.18.0-r0         apk                      
 shellingham             1.5.4             python                   
 skalibs-libs            2.14.5.1-r0       apk                      
@@ -108,7 +107,7 @@ typing-inspection       0.4.2             python
 tzdata                  2026a-r0          apk                      
 urllib3                 2.6.3             python                   
 utmps-libs              0.1.3.2-r1        apk                      
-uvicorn                 0.41.0            python                   
+uvicorn                 0.42.0            python                   
 uvloop                  0.22.1            python                   
 watchfiles              1.1.1             python                   
 websockets              16.0              python                   
