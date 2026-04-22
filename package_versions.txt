@@ -31,7 +31,7 @@ dnspython               2.8.0             python
 email-validator         2.3.0             python                   
 fastapi                 0.115.8           python                   
 fastapi-cli             0.0.24            python                   
-fastapi-cloud-cli       0.16.1            python                   
+fastapi-cloud-cli       0.17.0            python                   
 fastar                  0.11.0            python                   
 findutils               4.10.0-r0         apk                      
 gdbm                    1.26-r0           apk                      
@@ -39,7 +39,7 @@ h11                     0.16.0            python
 httpcore                1.0.9             python                   
 httptools               0.7.1             python                   
 httpx                   0.28.1            python                   
-idna                    3.11              python                   
+idna                    3.12              python                   
 jinja2                  3.1.6             python                   
 jq                      1.8.1-r0          apk                      
 libapk                  3.0.5-r1          apk                      
@@ -49,7 +49,7 @@ libbz2                  1.0.8-r6          apk
 libcrypto3              3.5.6-r0          apk                      
 libcurl                 8.19.0-r0         apk                      
 libexpat                2.7.5-r0          apk                      
-libffi                  3.5.2-r0          apk                      
+libffi                  3.5.2-r1          apk                      
 libgcc                  15.2.0-r3         apk                      
 libidn2                 2.3.8-r0          apk                      
 libintl                 0.24.1-r1         apk                      
@@ -76,8 +76,8 @@ pip                     26.0.1            python
 procps-ng               4.0.6-r0          apk                      
 pyc                     3.14.3-r0         apk                      
 pycparser               3.0               python                   
-pydantic                2.13.0            python                   
-pydantic-core           2.46.0            python                   
+pydantic                2.13.3            python                   
+pydantic-core           2.46.3            python                   
 pygithub                2.5.0             python                   
 pygments                2.20.0            python                   
 pyjwt                   2.12.1            python                   
@@ -107,7 +107,7 @@ typing-inspection       0.4.2             python
 tzdata                  2026a-r0          apk                      
 urllib3                 2.6.3             python                   
 utmps-libs              0.1.3.2-r1        apk                      
-uvicorn                 0.44.0            python                   
+uvicorn                 0.45.0            python                   
 uvloop                  0.22.1            python                   
 watchfiles              1.1.1             python                   
 websockets              16.0              python                   
