@@ -94,7 +94,7 @@ rich                    15.0.0            python
 rich-toolkit            0.20.3            python                   
 rignore                 0.8.1             python                   
 scanelf                 1.3.9-r1          apk                      
-sentry-sdk              2.66.1            python                   
+sentry-sdk              2.67.1            python                   
 shadow                  4.18.0-r1         apk                      
 shellingham             1.5.4             python                   
 skalibs-libs            2.15.1.0-r0       apk                      
@@ -103,7 +103,7 @@ ssl_client              1.38.0-r4         apk
 starlette               0.45.3            python                   
 typer                   0.27.1            python                   
 typing-extensions       4.16.0            python                   
-typing-inspection       0.4.2             python                   
+typing-inspection       0.4.3             python                   
 tzdata                  2026c-r0          apk                      
 urllib3                 2.7.0             python                   
 utmps-libs              0.1.3.4-r0        apk                      
