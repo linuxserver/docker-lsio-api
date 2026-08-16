@@ -18,7 +18,7 @@ ca-certificates-bundle  20260611-r0       apk
 catatonit               0.2.1-r0          apk                      
 certifi                 2026.7.22         python                   
 cffi                    2.1.1             python                   
-charset-normalizer      3.4.9             python                   
+charset-normalizer      3.5.1             python                   
 click                   8.4.2             python                   
 coreutils               9.11-r0           apk                      
 coreutils-env           9.11-r0           apk                      
@@ -74,7 +74,7 @@ nghttp2-libs            1.70.0-r0         apk
 oniguruma               6.9.10-r0         apk                      
 pip                     26.2.1            python                   
 procps-ng               4.0.6-r0          apk                      
-pyc                     3.14.5-r2         apk                      
+pyc                     3.14.7-r0         apk                      
 pycparser               3.0               python                   
 pydantic                2.13.4            python                   
 pydantic-core           2.46.4            python                   
@@ -82,11 +82,11 @@ pygithub                2.5.0             python
 pygments                2.20.0            python                   
 pyjwt                   2.13.0            python                   
 pynacl                  1.6.2             python                   
-python-dotenv           1.2.2             python                   
+python-dotenv           1.2.3             python                   
 python-multipart        0.0.32            python                   
-python3                 3.14.5-r2         apk                      
-python3-pyc             3.14.5-r2         apk                      
-python3-pycache-pyc0    3.14.5-r2         apk                      
+python3                 3.14.7-r0         apk                      
+python3-pyc             3.14.7-r0         apk                      
+python3-pycache-pyc0    3.14.7-r0         apk                      
 pyyaml                  6.0.2             python                   
 readline                8.3.3-r1          apk                      
 requests                2.34.2            python                   
@@ -94,7 +94,7 @@ rich                    15.0.0            python
 rich-toolkit            0.20.3            python                   
 rignore                 0.8.1             python                   
 scanelf                 1.3.9-r1          apk                      
-sentry-sdk              2.67.1            python                   
+sentry-sdk              2.68.0            python                   
 shadow                  4.18.0-r1         apk                      
 shellingham             1.5.4             python                   
 skalibs-libs            2.15.1.0-r0       apk                      
@@ -103,11 +103,11 @@ ssl_client              1.38.0-r4         apk
 starlette               0.45.3            python                   
 typer                   0.27.1            python                   
 typing-extensions       4.16.0            python                   
-typing-inspection       0.4.3             python                   
+typing-inspection       0.4.4             python                   
 tzdata                  2026c-r0          apk                      
 urllib3                 2.7.0             python                   
 utmps-libs              0.1.3.4-r0        apk                      
-uvicorn                 0.52.1            python                   
+uvicorn                 0.52.3            python                   
 uvloop                  0.22.1            python                   
 watchfiles              1.2.0             python                   
 websockets              17.0.1            python                   
