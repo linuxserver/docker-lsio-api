@@ -1,6 +1,7 @@
 NAME                    VERSION           TYPE                    
 Simple Launcher         1.1.0.14          binary  (+5 duplicates)  
 acl-libs                2.3.2-r1          apk                      
+agent-detector          1.1.0             python                   
 alpine-baselayout       3.7.2-r1          apk                      
 alpine-baselayout-data  3.7.2-r1          apk                      
 alpine-keys             2.6-r0            apk                      
@@ -19,7 +20,7 @@ catatonit               0.2.1-r0          apk
 certifi                 2026.7.22         python                   
 cffi                    2.1.1             python                   
 charset-normalizer      3.5.1             python                   
-click                   8.4.2             python                   
+click                   8.5.0             python                   
 coreutils               9.11-r0           apk                      
 coreutils-env           9.11-r0           apk                      
 coreutils-fmt           9.11-r0           apk                      
@@ -32,7 +33,7 @@ dnspython               2.8.0             python
 email-validator         2.3.0             python                   
 fastapi                 0.115.8           python                   
 fastapi-cli             0.0.32            python                   
-fastapi-cloud-cli       0.23.0            python                   
+fastapi-cloud-cli       0.24.0            python                   
 fastar                  0.12.0            python                   
 findutils               4.10.0-r1         apk                      
 h11                     0.16.0            python                   
@@ -46,19 +47,19 @@ libapk                  3.0.7-r0          apk
 libattr                 2.5.2-r2          apk                      
 libbsd                  0.12.2-r0         apk                      
 libbz2                  1.0.8-r6          apk                      
-libcrypto3              3.5.7-r0          apk                      
+libcrypto3              3.5.8-r0          apk                      
 libcurl                 8.21.0-r0         apk                      
-libexpat                2.8.3-r0          apk                      
-libffi                  3.5.2-r1          apk                      
+libexpat                2.8.4-r0          apk                      
+libffi                  3.8.0-r0          apk                      
 libgcc                  15.2.0-r9         apk                      
 libidn2                 2.3.8-r0          apk                      
 libintl                 1.0-r0            apk                      
 libmd                   1.2.0-r0          apk                      
-libncursesw             6.6_p20260815-r0  apk                      
-libpanelw               6.6_p20260815-r0  apk                      
+libncursesw             6.6_p20260822-r0  apk                      
+libpanelw               6.6_p20260822-r0  apk                      
 libproc2                4.0.7-r0          apk                      
 libpsl                  0.21.5-r3         apk                      
-libssl3                 3.5.7-r0          apk                      
+libssl3                 3.5.8-r0          apk                      
 libstdc++               15.2.0-r9         apk                      
 libunistring            1.4.2-r0          apk                      
 linux-pam               1.7.1-r2          apk                      
@@ -68,7 +69,7 @@ mdurl                   0.1.2             python
 mpdecimal               4.0.1-r0          apk                      
 musl                    1.2.6-r2          apk                      
 musl-utils              1.2.6-r2          apk                      
-ncurses-terminfo-base   6.6_p20260815-r0  apk                      
+ncurses-terminfo-base   6.6_p20260822-r0  apk                      
 netcat-openbsd          1.234.1-r0        apk                      
 nghttp2-libs            1.70.0-r0         apk                      
 oniguruma               6.9.10-r0         apk                      
@@ -76,8 +77,8 @@ pip                     26.2.1            python
 procps-ng               4.0.7-r0          apk                      
 pyc                     3.14.7-r0         apk                      
 pycparser               3.0               python                   
-pydantic                2.13.4            python                   
-pydantic-core           2.46.4            python                   
+pydantic                2.13.5            python                   
+pydantic-core           2.46.5            python                   
 pygithub                2.5.0             python                   
 pygments                2.21.0            python                   
 pyjwt                   2.13.0            python                   
@@ -101,7 +102,7 @@ skalibs-libs            2.15.1.0-r0       apk
 sqlite-libs             3.53.4-r0         apk                      
 ssl_client              1.38.0-r4         apk                      
 starlette               0.45.3            python                   
-typer                   0.27.1            python                   
+typer                   0.27.2            python                   
 typing-extensions       4.16.0            python                   
 typing-inspection       0.4.4             python                   
 tzdata                  2026c-r0          apk                      
@@ -110,8 +111,8 @@ utmps-libs              0.1.3.4-r0        apk
 uvicorn                 0.52.4            python                   
 uvloop                  0.22.1            python                   
 watchfiles              1.2.0             python                   
-websockets              17.0.1            python                   
-wrapt                   2.3.0             python                   
+websockets              17.1              python                   
+wrapt                   2.4.0             python                   
 xz-libs                 5.8.3-r0          apk                      
 zlib                    1.3.2-r0          apk                      
 zstd-libs               1.5.7-r2          apk                      
