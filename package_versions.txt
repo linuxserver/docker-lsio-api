@@ -26,7 +26,7 @@ coreutils-env           9.11-r2           apk
 coreutils-fmt           9.11-r2           apk                      
 coreutils-sha512sum     9.11-r2           apk                      
 cryptography            50.0.2            python                   
-curl                    8.22.0-r0         apk                      
+curl                    8.23.0-r0         apk                      
 deprecated              3.0.0             python                   
 detect-installer        0.2.1             python                   
 dnspython               2.9.0             python                   
@@ -48,7 +48,7 @@ libattr                 2.5.2-r2          apk
 libbsd                  0.12.2-r0         apk                      
 libbz2                  1.0.8-r6          apk                      
 libcrypto3              3.5.9-r0          apk                      
-libcurl                 8.22.0-r0         apk                      
+libcurl                 8.23.0-r0         apk                      
 libexpat                2.9.0-r0          apk                      
 libffi                  3.8.0-r0          apk                      
 libgcc                  15.2.0-r9         apk                      
@@ -99,7 +99,7 @@ sentry-sdk              2.72.0            python
 shadow                  4.20.3-r2         apk                      
 shellingham             1.5.4             python                   
 skalibs-libs            2.15.1.0-r0       apk                      
-sqlite-libs             3.54.0-r0         apk                      
+sqlite-libs             3.54.1-r0         apk                      
 ssl_client              1.38.0-r7         apk                      
 starlette               0.45.3            python                   
 typer                   0.27.3            python                   
