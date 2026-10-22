@@ -3,6 +3,7 @@ from keyvaluestore import KeyValueStore, set_db_schema
 from models import Architecture, Changelog, Tag, EnvVar, Volume, Port, Config
 from models import Custom, SecurityOpt, Device, Cap, Hostname, MacAddress, Image
 from models import Repository, ImagesData, ImagesResponse, IMAGES_SCHEMA_VERSION, SCARF_SCHEMA_VERSION
+from models import StatsResponse, STATS_SCHEMA_VERSION
 
 import datetime
 import json
@@ -258,6 +259,28 @@ def update_status(status):
         kv.set_value("status", status, 0)
         print(f"{datetime.datetime.now()} - updated status")
 
+def update_stats():
+    stats_response = StatsResponse(total_images=0, total_monthly_pulls=0, total_stars=0)
+
+    with KeyValueStore(invalidate_hours=INVALIDATE_HOURS, readonly=False) as kv:
+        is_current_schema = kv.is_current_schema("stats", STATS_SCHEMA_VERSION)
+        if ("stats" in kv and is_current_schema) or CI == "1":
+            print(f"{datetime.datetime.now()} - stats skipped - already updated")
+            return
+        print(f"{datetime.datetime.now()} - updating stats")
+        images_json = kv["images"]
+        images_response = ImagesResponse.model_validate_json(images_json)
+        images = images_response.data.repositories.linuxserver
+
+        for image in images:
+            stats_response.total_monthly_pulls += image.monthly_pulls or 0
+            stats_response.total_images += 1
+            stats_response.total_stars += image.stars
+        
+        new_state = stats_response.model_dump_json(exclude_none=True)
+        kv.set_value("stats", new_state, STATS_SCHEMA_VERSION)
+        print(f"{datetime.datetime.now()} - updated stats")
+
 def main():
     try:
         set_db_schema()
@@ -266,6 +289,7 @@ def main():
             update_scarf()
             update_images()
             gh.print_rate_limit()
+            update_stats()
             update_status("Success")
             time.sleep(INVALIDATE_HOURS*60*60)
     except Exception as ex:
