@@ -3,7 +3,7 @@ from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from keyvaluestore import KeyValueStore
-from models import ImagesResponse
+from models import ImagesResponse, StatsResponse
 from pydantic import ValidationError
 import json
 import os
@@ -51,6 +51,20 @@ async def images(include_config: bool = False, include_deprecated: bool = False)
         response = await get_images()
         content = json.loads(response)
         return JSONResponse(content=content)
+    except Exception:
+        print(traceback.format_exc())
+        raise HTTPException(status_code=404, detail="Not found")
+
+async def get_stats():
+    with KeyValueStore() as kv:
+        return kv["stats"]
+
+@api.get("/stats", response_model=StatsResponse, summary="Get the stats")
+async def stats():
+    try:
+        response = await get_stats()
+        stats_response = StatsResponse.model_validate_json(response)
+        return stats_response
     except Exception:
         print(traceback.format_exc())
         raise HTTPException(status_code=404, detail="Not found")

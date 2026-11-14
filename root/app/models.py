@@ -3,6 +3,7 @@ from pydantic import BaseModel
 # Increment when updating schema or forcing an update on start
 IMAGES_SCHEMA_VERSION = 3
 SCARF_SCHEMA_VERSION = 1
+STATS_SCHEMA_VERSION = 1
 
 
 class Tag(BaseModel):
@@ -128,3 +129,8 @@ class ImagesResponse(BaseModel):
     def exclude_deprecated(self):
         images = self.data.repositories.linuxserver
         self.data.repositories.linuxserver = list(filter(lambda image: not image.deprecated, images))
+
+class StatsResponse(BaseModel):
+    total_images: int
+    total_stars: int
+    total_monthly_pulls: int
